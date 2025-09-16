@@ -544,7 +544,7 @@ Totalt pris: ${calculatePrice()} kr
                             checked={formData.cleaningFrequency === 'weekly'}
                             onChange={(e) => handleInputChange('cleaningFrequency', e.target.value)}
                           />
-                          <span className="font-medium">Veckovis (4,33 gånger/månad)</span>
+                          <span className="font-medium">Veckovis</span>
                         </label>
                         <label className={`flex items-center space-x-3 p-4 rounded-lg border-2 cursor-pointer ${
                           formData.cleaningFrequency === 'biweekly'
@@ -558,7 +558,7 @@ Totalt pris: ${calculatePrice()} kr
                             checked={formData.cleaningFrequency === 'biweekly'}
                             onChange={(e) => handleInputChange('cleaningFrequency', e.target.value)}
                           />
-                          <span className="font-medium">Varannan vecka (2,17 gånger/månad)</span>
+                          <span className="font-medium">Varannan vecka</span>
                         </label>
                         <label className={`flex items-center space-x-3 p-4 rounded-lg border-2 cursor-pointer ${
                           formData.cleaningFrequency === 'monthly'
@@ -572,7 +572,7 @@ Totalt pris: ${calculatePrice()} kr
                             checked={formData.cleaningFrequency === 'monthly'}
                             onChange={(e) => handleInputChange('cleaningFrequency', e.target.value)}
                           />
-                          <span className="font-medium">Månadsvis (1 gång/månad)</span>
+                          <span className="font-medium">Månadsvis</span>
                         </label>
                       </div>
                       {errors.cleaningFrequency && <p className="text-red-500 text-sm mt-1">{errors.cleaningFrequency}</p>}
@@ -598,7 +598,7 @@ Totalt pris: ${calculatePrice()} kr
                       40 kvm = 1 timme (avrundat uppåt till nästa 0,5 timme)
                     </p>
                     <p className="text-sm text-gray-600">
-                      {formData.frequency === 'regular' && formData.cleaningFrequency ? (
+                      {formData.frequency === 'regular' && formData.cleaningFrequency && formData.squareMeters ? (
                         `Månadspris: ${calculatePrice()}kr (${formData.cleaningFrequency === 'weekly' ? 'Veckovis' : 
                          formData.cleaningFrequency === 'biweekly' ? 'Varannan vecka' : 'Månadsvis'})`
                       ) : (
