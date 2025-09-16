@@ -25,15 +25,18 @@ const Services: React.FC = () => {
       title: 'Storstädning',
       description: 'Omfattande storstädning för djuprengöring av ditt hem. Perfekt för flytt, säsonsrengöring eller när du vill ha en grundlig genomgång av hela bostaden.',
       features: [
-        'Djuprengöring av alla rum',
+        'Djuprengöring av alla rum och väggar',
+        'Rengöring av vatten- och luftfilter',
+        'Grundlig rengöring av köksmöbler',
+        'Rengöring av sophinkar i köket',
+        'Alla väggar och rör i toaletter',
         'Rengöring av apparater',
         'Fönsterputs innanför',
-        'Skåp och lådor',
-        'Grundlig badrumsstädning'
+        'Skåp och lådor'
       ],
       pricing: {
-        regular: '300kr/tim (regelbundet)',
-        oneTime: '350kr/tim (engångsstädning)'
+        regular: '350kr/tim (regelbundet)',
+        oneTime: '400kr/tim (engångsstädning)'
       },
       included: 'Alla städmaterial, rengöringsmedel, mikrofiberdukar och startmop ingår'
     },
@@ -49,8 +52,7 @@ const Services: React.FC = () => {
         'Säkert utförande'
       ],
       pricing: {
-        service: 'Endast engångsservice (350kr/tim)',
-        calculation: '3 fönster = 1 timme'
+        service: 'Endast engångsservice (300kr/tim)'
       },
       included: 'Alla städmaterial, rengöringsmedel, mikrofiberdukar och startmop ingår'
     }

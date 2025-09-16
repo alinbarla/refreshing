@@ -9,8 +9,10 @@ interface FormData {
   address: string;
   serviceType: 'grundstadning' | 'storstadning' | 'fonsterputs' | '';
   frequency: 'regular' | 'oneTime' | '';
+  cleaningFrequency: 'weekly' | 'biweekly' | 'monthly' | '';
   squareMeters: string;
   windows: string;
+  windowType: 'single' | 'double' | '';
 }
 
 const BookingForm: React.FC = () => {
@@ -24,8 +26,10 @@ const BookingForm: React.FC = () => {
     address: '',
     serviceType: '',
     frequency: '',
+    cleaningFrequency: '',
     squareMeters: '',
-    windows: ''
+    windows: '',
+    windowType: ''
   });
 
   const [errors, setErrors] = useState<Partial<FormData>>({});
@@ -48,8 +52,12 @@ const BookingForm: React.FC = () => {
     if (step === 3) {
       if (formData.serviceType === 'fonsterputs') {
         if (!formData.windows.trim()) newErrors.windows = 'Antal fönster är obligatoriskt';
+        if (!formData.windowType) newErrors.windowType = 'Välj fönstertyp';
       } else {
         if (!formData.frequency) newErrors.frequency = 'Välj frekvens';
+        if (formData.frequency === 'regular' && !formData.cleaningFrequency) {
+          newErrors.cleaningFrequency = 'Välj städfrekvens';
+        }
         if (!formData.squareMeters.trim()) newErrors.squareMeters = 'Kvadratmeter är obligatoriskt';
       }
     }
@@ -61,14 +69,39 @@ const BookingForm: React.FC = () => {
   const calculatePrice = (): number => {
     if (formData.serviceType === 'fonsterputs') {
       const windows = parseInt(formData.windows) || 0;
-      const hours = Math.ceil(windows / 3);
-      return hours * 350; // Only one-time service for windows (+50kr)
+      const windowsPerHour = formData.windowType === 'double' ? 1.5 : 3;
+      const hours = Math.ceil(windows / windowsPerHour);
+      return hours * 300; // 300kr/tim for window cleaning
+    } else if (formData.serviceType === 'storstadning') {
+      const sqm = parseInt(formData.squareMeters) || 0;
+      let hours = sqm / 40;
+      hours = Math.ceil(hours * 2) / 2; // Round up to next 0.5 hour
+      const rate = formData.frequency === 'regular' ? 350 : 400; // Deep cleaning rates
+      const singlePrice = hours * rate;
+      
+      // Calculate monthly price for regular cleaning
+      if (formData.frequency === 'regular' && formData.cleaningFrequency) {
+        const monthlyMultiplier = formData.cleaningFrequency === 'weekly' ? 4.33 : 
+                                 formData.cleaningFrequency === 'biweekly' ? 2.17 : 1;
+        return Math.round(singlePrice * monthlyMultiplier);
+      }
+      
+      return singlePrice;
     } else {
       const sqm = parseInt(formData.squareMeters) || 0;
       let hours = sqm / 40;
       hours = Math.ceil(hours * 2) / 2; // Round up to next 0.5 hour
-      const rate = formData.frequency === 'regular' ? 300 : 350; // +50kr for both rates
-      return hours * rate;
+      const rate = formData.frequency === 'regular' ? 300 : 350; // Normal cleaning rates
+      const singlePrice = hours * rate;
+      
+      // Calculate monthly price for regular cleaning
+      if (formData.frequency === 'regular' && formData.cleaningFrequency) {
+        const monthlyMultiplier = formData.cleaningFrequency === 'weekly' ? 4.33 : 
+                                 formData.cleaningFrequency === 'biweekly' ? 2.17 : 1;
+        return Math.round(singlePrice * monthlyMultiplier);
+      }
+      
+      return singlePrice;
     }
   };
 
@@ -82,7 +115,20 @@ const BookingForm: React.FC = () => {
   };
 
   const getFrequencyText = (freq: string): string => {
-    if (formData.serviceType === 'fonsterputs') return 'Endast engångsservice (350kr/tim)';
+    if (formData.serviceType === 'fonsterputs') return 'Endast engångsservice (300kr/tim)';
+    if (formData.serviceType === 'storstadning') {
+      if (freq === 'regular' && formData.cleaningFrequency) {
+        const frequencyText = formData.cleaningFrequency === 'weekly' ? 'Veckovis' : 
+                             formData.cleaningFrequency === 'biweekly' ? 'Varannan vecka' : 'Månadsvis';
+        return `Regelbunden städning (350kr/tim) - ${frequencyText}`;
+      }
+      return freq === 'regular' ? 'Regelbunden städning (350kr/tim)' : 'Engångsstädning (400kr/tim)';
+    }
+    if (freq === 'regular' && formData.cleaningFrequency) {
+      const frequencyText = formData.cleaningFrequency === 'weekly' ? 'Veckovis' : 
+                           formData.cleaningFrequency === 'biweekly' ? 'Varannan vecka' : 'Månadsvis';
+      return `Regelbunden städning (300kr/tim) - ${frequencyText}`;
+    }
     return freq === 'regular' ? 'Regelbunden städning (300kr/tim)' : 'Engångsstädning (350kr/tim)';
   };
 
@@ -191,8 +237,10 @@ Totalt pris: ${calculatePrice()} kr
                   address: '',
                   serviceType: '',
                   frequency: '',
+                  cleaningFrequency: '',
                   squareMeters: '',
-                  windows: ''
+                  windows: '',
+                  windowType: ''
                 });
               }}
               className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-8 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
@@ -377,7 +425,44 @@ Totalt pris: ${calculatePrice()} kr
               {formData.serviceType === 'fonsterputs' ? (
                 <div className="space-y-6">
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                    <p className="text-yellow-800 font-medium">Endast engångsservice</p>
+                    <p className="text-yellow-800 font-medium">Endast engångsservice (300kr/tim)</p>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-4">
+                      Välj fönstertyp *
+                    </label>
+                    <div className="space-y-3">
+                      <label className={`flex items-center space-x-3 p-4 rounded-lg border-2 cursor-pointer ${
+                        formData.windowType === 'single'
+                          ? 'border-cyan-500 bg-cyan-50'
+                          : 'border-gray-200 hover:border-cyan-300'
+                      }`}>
+                        <input
+                          type="radio"
+                          name="windowType"
+                          value="single"
+                          checked={formData.windowType === 'single'}
+                          onChange={(e) => handleInputChange('windowType', e.target.value)}
+                        />
+                        <span className="font-medium">Enkelputs (3 fönster/timme)</span>
+                      </label>
+                      <label className={`flex items-center space-x-3 p-4 rounded-lg border-2 cursor-pointer ${
+                        formData.windowType === 'double'
+                          ? 'border-cyan-500 bg-cyan-50'
+                          : 'border-gray-200 hover:border-cyan-300'
+                      }`}>
+                        <input
+                          type="radio"
+                          name="windowType"
+                          value="double"
+                          checked={formData.windowType === 'double'}
+                          onChange={(e) => handleInputChange('windowType', e.target.value)}
+                        />
+                        <span className="font-medium">Dubbelputs (1,5 fönster/timme)</span>
+                      </label>
+                    </div>
+                    {errors.windowType && <p className="text-red-500 text-sm mt-1">{errors.windowType}</p>}
                   </div>
                   
                   <div>
@@ -395,9 +480,6 @@ Totalt pris: ${calculatePrice()} kr
                       min="1"
                     />
                     {errors.windows && <p className="text-red-500 text-sm mt-1">{errors.windows}</p>}
-                    <p className="text-sm text-gray-600 mt-2">
-                      3 fönster = 1 timme (350kr/tim)
-                    </p>
                   </div>
                 </div>
               ) : (
@@ -419,7 +501,9 @@ Totalt pris: ${calculatePrice()} kr
                           checked={formData.frequency === 'oneTime'}
                           onChange={(e) => handleInputChange('frequency', e.target.value)}
                         />
-                        <span className="font-medium">Engångsstädning (350kr/tim)</span>
+                        <span className="font-medium">
+                          Engångsstädning ({formData.serviceType === 'storstadning' ? '400kr/tim' : '350kr/tim'})
+                        </span>
                       </label>
                       <label className={`flex items-center space-x-3 p-4 rounded-lg border-2 cursor-pointer ${
                         formData.frequency === 'regular'
@@ -433,11 +517,67 @@ Totalt pris: ${calculatePrice()} kr
                           checked={formData.frequency === 'regular'}
                           onChange={(e) => handleInputChange('frequency', e.target.value)}
                         />
-                        <span className="font-medium">Regelbunden städning (300kr/tim)</span>
+                        <span className="font-medium">
+                          Regelbunden städning ({formData.serviceType === 'storstadning' ? '350kr/tim' : '300kr/tim'})
+                        </span>
                       </label>
                     </div>
                     {errors.frequency && <p className="text-red-500 text-sm mt-1">{errors.frequency}</p>}
                   </div>
+
+                  {/* Cleaning Frequency Selection for Regular Cleaning */}
+                  {formData.frequency === 'regular' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-4">
+                        Välj städfrekvens *
+                      </label>
+                      <div className="space-y-3">
+                        <label className={`flex items-center space-x-3 p-4 rounded-lg border-2 cursor-pointer ${
+                          formData.cleaningFrequency === 'weekly'
+                            ? 'border-cyan-500 bg-cyan-50'
+                            : 'border-gray-200 hover:border-cyan-300'
+                        }`}>
+                          <input
+                            type="radio"
+                            name="cleaningFrequency"
+                            value="weekly"
+                            checked={formData.cleaningFrequency === 'weekly'}
+                            onChange={(e) => handleInputChange('cleaningFrequency', e.target.value)}
+                          />
+                          <span className="font-medium">Veckovis (4,33 gånger/månad)</span>
+                        </label>
+                        <label className={`flex items-center space-x-3 p-4 rounded-lg border-2 cursor-pointer ${
+                          formData.cleaningFrequency === 'biweekly'
+                            ? 'border-cyan-500 bg-cyan-50'
+                            : 'border-gray-200 hover:border-cyan-300'
+                        }`}>
+                          <input
+                            type="radio"
+                            name="cleaningFrequency"
+                            value="biweekly"
+                            checked={formData.cleaningFrequency === 'biweekly'}
+                            onChange={(e) => handleInputChange('cleaningFrequency', e.target.value)}
+                          />
+                          <span className="font-medium">Varannan vecka (2,17 gånger/månad)</span>
+                        </label>
+                        <label className={`flex items-center space-x-3 p-4 rounded-lg border-2 cursor-pointer ${
+                          formData.cleaningFrequency === 'monthly'
+                            ? 'border-cyan-500 bg-cyan-50'
+                            : 'border-gray-200 hover:border-cyan-300'
+                        }`}>
+                          <input
+                            type="radio"
+                            name="cleaningFrequency"
+                            value="monthly"
+                            checked={formData.cleaningFrequency === 'monthly'}
+                            onChange={(e) => handleInputChange('cleaningFrequency', e.target.value)}
+                          />
+                          <span className="font-medium">Månadsvis (1 gång/månad)</span>
+                        </label>
+                      </div>
+                      {errors.cleaningFrequency && <p className="text-red-500 text-sm mt-1">{errors.cleaningFrequency}</p>}
+                    </div>
+                  )}
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -458,7 +598,14 @@ Totalt pris: ${calculatePrice()} kr
                       40 kvm = 1 timme (avrundat uppåt till nästa 0,5 timme)
                     </p>
                     <p className="text-sm text-gray-600">
-                      Regelbunden: 300kr/tim | Engångs: 350kr/tim
+                      {formData.frequency === 'regular' && formData.cleaningFrequency ? (
+                        `Månadspris: ${calculatePrice()}kr (${formData.cleaningFrequency === 'weekly' ? 'Veckovis' : 
+                         formData.cleaningFrequency === 'biweekly' ? 'Varannan vecka' : 'Månadsvis'})`
+                      ) : (
+                        formData.serviceType === 'storstadning' 
+                          ? 'Regelbunden: 350kr/tim | Engångs: 400kr/tim'
+                          : 'Regelbunden: 300kr/tim | Engångs: 350kr/tim'
+                      )}
                     </p>
                   </div>
                 </div>
@@ -495,7 +642,10 @@ Totalt pris: ${calculatePrice()} kr
                         <p><span className="font-medium">Kvadratmeter:</span> {formData.squareMeters} kvm</p>
                       )}
                       {formData.serviceType === 'fonsterputs' && (
-                        <p><span className="font-medium">Antal fönster:</span> {formData.windows}</p>
+                        <>
+                          <p><span className="font-medium">Antal fönster:</span> {formData.windows}</p>
+                          <p><span className="font-medium">Fönstertyp:</span> {formData.windowType === 'single' ? 'Enkelputs' : 'Dubbelputs'}</p>
+                        </>
                       )}
                     </div>
                   </div>
@@ -504,7 +654,7 @@ Totalt pris: ${calculatePrice()} kr
                 <div className="border-t border-blue-200 mt-6 pt-6">
                   <div className="text-center">
                     <div className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent mb-2">
-                      Totalt pris: {calculatePrice()} kr
+                      {formData.frequency === 'regular' && formData.cleaningFrequency ? 'Månadspris' : 'Totalt pris'}: {calculatePrice()} kr
                     </div>
                     <p className="text-sm text-gray-600">
                       Alla städmaterial, rengöringsmedel, mikrofiberdukar och startmop ingår
