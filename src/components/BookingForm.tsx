@@ -485,6 +485,29 @@ Totalt pris: ${calculatePrice()} kr
               ) : (
                 <div className="space-y-6">
                   <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Kvadratmeter i ditt hem *
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.squareMeters}
+                      onChange={(e) => handleInputChange('squareMeters', e.target.value)}
+                      className={`w-full px-4 py-3 rounded-lg border ${
+                        errors.squareMeters ? 'border-red-500' : 'border-gray-300'
+                      } focus:ring-2 focus:ring-cyan-500 focus:border-transparent`}
+                      placeholder="Ange kvadratmeter"
+                      min="1"
+                    />
+                    {errors.squareMeters && <p className="text-red-500 text-sm mt-1">{errors.squareMeters}</p>}
+                    <p className="text-sm text-gray-600">
+                      {formData.serviceType === 'storstadning' 
+                        ? 'Regelbunden: 350kr/tim | Engångs: 400kr/tim'
+                        : 'Regelbunden: 300kr/tim | Engångs: 350kr/tim'
+                      }
+                    </p>
+                  </div>
+
+                  <div>
                     <label className="block text-sm font-medium text-gray-700 mb-4">
                       Välj frekvens *
                     </label>
@@ -578,36 +601,6 @@ Totalt pris: ${calculatePrice()} kr
                       {errors.cleaningFrequency && <p className="text-red-500 text-sm mt-1">{errors.cleaningFrequency}</p>}
                     </div>
                   )}
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Kvadratmeter i ditt hem *
-                    </label>
-                    <input
-                      type="number"
-                      value={formData.squareMeters}
-                      onChange={(e) => handleInputChange('squareMeters', e.target.value)}
-                      className={`w-full px-4 py-3 rounded-lg border ${
-                        errors.squareMeters ? 'border-red-500' : 'border-gray-300'
-                      } focus:ring-2 focus:ring-cyan-500 focus:border-transparent`}
-                      placeholder="Ange kvadratmeter"
-                      min="1"
-                    />
-                    {errors.squareMeters && <p className="text-red-500 text-sm mt-1">{errors.squareMeters}</p>}
-                    <p className="text-sm text-gray-600 mt-2">
-                      40 kvm = 1 timme (avrundat uppåt till nästa 0,5 timme)
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {formData.frequency === 'regular' && formData.cleaningFrequency && formData.squareMeters ? (
-                        `Månadspris: ${calculatePrice()}kr (${formData.cleaningFrequency === 'weekly' ? 'Veckovis' : 
-                         formData.cleaningFrequency === 'biweekly' ? 'Varannan vecka' : 'Månadsvis'})`
-                      ) : (
-                        formData.serviceType === 'storstadning' 
-                          ? 'Regelbunden: 350kr/tim | Engångs: 400kr/tim'
-                          : 'Regelbunden: 300kr/tim | Engångs: 350kr/tim'
-                      )}
-                    </p>
-                  </div>
                 </div>
               )}
             </div>
@@ -685,7 +678,7 @@ Totalt pris: ${calculatePrice()} kr
 
           {/* Navigation Buttons */}
           {currentStep < 4 && (
-            <div className="flex justify-between mt-8">
+            <div className="flex justify-between items-center mt-8">
               {currentStep > 1 ? (
                 <button
                   onClick={prevStep}
@@ -698,13 +691,23 @@ Totalt pris: ${calculatePrice()} kr
                 <div />
               )}
 
-              <button
-                onClick={nextStep}
-                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-              >
-                <span>Nästa</span>
-                <ChevronRight className="h-4 w-4" />
-              </button>
+              <div className="flex items-center space-x-4">
+                {/* Monthly Price Display */}
+                {formData.frequency === 'regular' && formData.cleaningFrequency && formData.squareMeters && (
+                  <div className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-6 py-3 rounded-lg font-bold text-lg shadow-lg">
+                    Månadspris: {calculatePrice()}kr ({formData.cleaningFrequency === 'weekly' ? 'Veckovis' : 
+                     formData.cleaningFrequency === 'biweekly' ? 'Varannan vecka' : 'Månadsvis'})
+                  </div>
+                )}
+
+                <button
+                  onClick={nextStep}
+                  className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                >
+                  <span>Nästa</span>
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           )}
         </div>
