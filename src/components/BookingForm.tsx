@@ -273,25 +273,33 @@ Totalt pris: ${calculatePrice()} kr
           <div className="flex items-center justify-between max-w-md mx-auto">
             {[1, 2, 3, 4].map((step) => (
               <React.Fragment key={step}>
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
-                  step <= currentStep 
-                    ? 'bg-gradient-to-r from-blue-500 to-cyan-600 text-white shadow-lg' 
-                    : 'bg-white text-gray-400 border border-gray-300'
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300 ${
+                  step === currentStep
+                    ? 'bg-gradient-to-r from-blue-500 to-cyan-600 text-white shadow-xl scale-110' 
+                    : step < currentStep
+                    ? 'bg-gradient-to-r from-blue-500 to-cyan-600 text-white shadow-lg'
+                    : 'bg-white text-gray-400 border-2 border-gray-300'
                 }`}>
                   {step}
                 </div>
                 {step < 4 && (
-                  <div className={`flex-1 h-1 mx-2 rounded ${
+                  <div className={`flex-1 h-2 mx-3 rounded-full transition-all duration-300 ${
                     step < currentStep ? 'bg-gradient-to-r from-blue-500 to-cyan-600' : 'bg-gray-300'
                   }`} />
                 )}
               </React.Fragment>
             ))}
           </div>
-          <div className="text-center mt-4">
-            <span className="text-sm font-medium text-gray-600">
-              Steg {currentStep}/4
+          <div className="text-center mt-6">
+            <span className="text-lg font-semibold text-gray-700">
+              Steg {currentStep} av 4
             </span>
+            <div className="mt-2 text-sm text-gray-500">
+              {currentStep === 1 && 'Personlig information'}
+              {currentStep === 2 && 'Välj tjänst'}
+              {currentStep === 3 && 'Frekvens & storlek'}
+              {currentStep === 4 && 'Sammanfattning'}
+            </div>
           </div>
         </div>
 
@@ -401,7 +409,7 @@ Totalt pris: ${calculatePrice()} kr
                       value={service.id}
                       checked={formData.serviceType === service.id}
                       onChange={(e) => handleInputChange('serviceType', e.target.value)}
-                      className="mt-1"
+                      className="mt-1 focus:outline-none"
                     />
                     <div>
                       <h4 className="font-semibold text-gray-900">{service.title}</h4>
@@ -692,11 +700,38 @@ Totalt pris: ${calculatePrice()} kr
               )}
 
               <div className="flex items-center space-x-4">
-                {/* Monthly Price Display */}
-                {formData.frequency === 'regular' && formData.cleaningFrequency && formData.squareMeters && (
+                {/* Price Display */}
+                {formData.serviceType && (
                   <div className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-6 py-3 rounded-lg font-bold text-lg shadow-lg">
-                    Månadspris: {calculatePrice()}kr ({formData.cleaningFrequency === 'weekly' ? 'Veckovis' : 
-                     formData.cleaningFrequency === 'biweekly' ? 'Varannan vecka' : 'Månadsvis'})
+                    {formData.squareMeters ? (
+                      <>
+                        {formData.frequency === 'regular' ? (
+                          <>
+                            Månadspris: {calculatePrice()}kr ({formData.cleaningFrequency === 'weekly' ? 'Veckovis' : 
+                             formData.cleaningFrequency === 'biweekly' ? 'Varannan vecka' : 'Månadsvis'})
+                          </>
+                        ) : (
+                          <>
+                            Totalt pris: {calculatePrice()}kr ({formData.serviceType === 'grundstadning' ? 'Grundstädning' : 
+                             formData.serviceType === 'storstadning' ? 'Storstädning' : 'Fönsterputs'})
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {formData.frequency === 'regular' ? (
+                          <>
+                            Välj kvadratmeter för att se månadspris ({formData.cleaningFrequency === 'weekly' ? 'Veckovis' : 
+                             formData.cleaningFrequency === 'biweekly' ? 'Varannan vecka' : 'Månadsvis'})
+                          </>
+                        ) : (
+                          <>
+                            Välj kvadratmeter för att se totalt pris ({formData.serviceType === 'grundstadning' ? 'Grundstädning' : 
+                             formData.serviceType === 'storstadning' ? 'Storstädning' : 'Fönsterputs'})
+                          </>
+                        )}
+                      </>
+                    )}
                   </div>
                 )}
 
