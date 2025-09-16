@@ -9,6 +9,23 @@
   font-family: 'Inter', sans-serif;
 }
 
+/* Remove radio button outlines */
+input[type="radio"] {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+input[type="radio"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  ring: 0 !important;
+}
+
+input[type="radio"]:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 html {
   scroll-behavior: smooth;
 }

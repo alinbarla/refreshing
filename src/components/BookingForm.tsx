@@ -46,10 +46,13 @@ const BookingForm: React.FC = () => {
     }
 
     if (step === 2) {
-      if (!formData.serviceType) newErrors.serviceType = 'Välj en tjänst';
+      // Allow proceeding to step 2 without selecting service type
+      // Service type will be required when going to step 3
     }
 
     if (step === 3) {
+      if (!formData.serviceType) newErrors.serviceType = 'Välj en tjänst';
+      
       if (formData.serviceType === 'fonsterputs') {
         if (!formData.windows.trim()) newErrors.windows = 'Antal fönster är obligatoriskt';
         if (!formData.windowType) newErrors.windowType = 'Välj fönstertyp';
@@ -58,7 +61,14 @@ const BookingForm: React.FC = () => {
         if (formData.frequency === 'regular' && !formData.cleaningFrequency) {
           newErrors.cleaningFrequency = 'Välj städfrekvens';
         }
-        if (!formData.squareMeters.trim()) newErrors.squareMeters = 'Kvadratmeter är obligatoriskt';
+        // Don't require squareMeters in step 3 validation - only when going to step 4
+      }
+    }
+
+    if (step === 4) {
+      // Only require squareMeters when going to final step
+      if (formData.serviceType !== 'fonsterputs' && !formData.squareMeters.trim()) {
+        newErrors.squareMeters = 'Kvadratmeter är obligatoriskt';
       }
     }
 
@@ -133,7 +143,8 @@ const BookingForm: React.FC = () => {
   };
 
   const nextStep = () => {
-    if (validateStep(currentStep)) {
+    const isValid = validateStep(currentStep);
+    if (isValid) {
       setCurrentStep(prev => Math.min(prev + 1, 4));
     }
   };
@@ -305,6 +316,7 @@ Totalt pris: ${calculatePrice()} kr
 
         {/* Form Content */}
         <div className="bg-white rounded-2xl shadow-lg p-8">
+          
           {/* Step 1: Personal Information */}
           {currentStep === 1 && (
             <div className="space-y-6">
@@ -409,7 +421,7 @@ Totalt pris: ${calculatePrice()} kr
                       value={service.id}
                       checked={formData.serviceType === service.id}
                       onChange={(e) => handleInputChange('serviceType', e.target.value)}
-                      className="mt-1 focus:outline-none"
+                      className="mt-1 focus:outline-none focus:ring-0 focus:ring-offset-0"
                     />
                     <div>
                       <h4 className="font-semibold text-gray-900">{service.title}</h4>
@@ -700,36 +712,18 @@ Totalt pris: ${calculatePrice()} kr
               )}
 
               <div className="flex items-center space-x-4">
-                {/* Price Display */}
-                {formData.serviceType && (
+                {/* Price Display - Only show when all required info is available */}
+                {formData.serviceType && formData.squareMeters && formData.frequency && (
                   <div className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-6 py-3 rounded-lg font-bold text-lg shadow-lg">
-                    {formData.squareMeters ? (
+                    {formData.frequency === 'regular' ? (
                       <>
-                        {formData.frequency === 'regular' ? (
-                          <>
-                            Månadspris: {calculatePrice()}kr ({formData.cleaningFrequency === 'weekly' ? 'Veckovis' : 
-                             formData.cleaningFrequency === 'biweekly' ? 'Varannan vecka' : 'Månadsvis'})
-                          </>
-                        ) : (
-                          <>
-                            Totalt pris: {calculatePrice()}kr ({formData.serviceType === 'grundstadning' ? 'Grundstädning' : 
-                             formData.serviceType === 'storstadning' ? 'Storstädning' : 'Fönsterputs'})
-                          </>
-                        )}
+                        Månadspris: {calculatePrice()}kr ({formData.cleaningFrequency === 'weekly' ? 'Veckovis' : 
+                         formData.cleaningFrequency === 'biweekly' ? 'Varannan vecka' : 'Månadsvis'})
                       </>
                     ) : (
                       <>
-                        {formData.frequency === 'regular' ? (
-                          <>
-                            Välj kvadratmeter för att se månadspris ({formData.cleaningFrequency === 'weekly' ? 'Veckovis' : 
-                             formData.cleaningFrequency === 'biweekly' ? 'Varannan vecka' : 'Månadsvis'})
-                          </>
-                        ) : (
-                          <>
-                            Välj kvadratmeter för att se totalt pris ({formData.serviceType === 'grundstadning' ? 'Grundstädning' : 
-                             formData.serviceType === 'storstadning' ? 'Storstädning' : 'Fönsterputs'})
-                          </>
-                        )}
+                        Totalt pris: {calculatePrice()}kr ({formData.serviceType === 'grundstadning' ? 'Grundstädning' : 
+                         formData.serviceType === 'storstadning' ? 'Storstädning' : 'Fönsterputs'})
                       </>
                     )}
                   </div>
@@ -745,6 +739,7 @@ Totalt pris: ${calculatePrice()} kr
               </div>
             </div>
           )}
+
         </div>
       </div>
     </section>
