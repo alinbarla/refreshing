@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, User, Home, Calendar, FileText, Mail } from 'lucide-react';
-import emailjs from 'emailjs-com';
+// Using serverless function instead of EmailJS
+
+type FormErrors = {
+  name?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  serviceType?: string;
+  frequency?: string;
+  cleaningFrequency?: string;
+  squareMeters?: string;
+  windows?: string;
+  windowType?: string;
+};
 
 interface FormData {
   name: string;
@@ -32,10 +45,10 @@ const BookingForm: React.FC = () => {
     windowType: ''
   });
 
-  const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [errors, setErrors] = useState<FormErrors>({});
 
   const validateStep = (step: number): boolean => {
-    const newErrors: Partial<FormData> = {};
+    const newErrors: FormErrors = {};
 
     if (step === 1) {
       if (!formData.name.trim()) newErrors.name = 'Namn är obligatoriskt';
@@ -166,11 +179,7 @@ const BookingForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Initialize EmailJS (replace with your actual credentials)
-      emailjs.init("YOUR_USER_ID");
-
-      const emailData = {
-        to_email: 'info@refreshing.se',
+      const payload = {
         customer_email: formData.email,
         customer_name: formData.name,
         customer_phone: formData.phone,
@@ -192,24 +201,18 @@ Totalt pris: ${calculatePrice()} kr
         `
       };
 
-      // Send to business
-      await emailjs.send(
-        'YOUR_SERVICE_ID',
-        'YOUR_TEMPLATE_ID',
-        emailData,
-        'YOUR_USER_ID'
-      );
-
-      // Send confirmation to customer
-      await emailjs.send(
-        'YOUR_SERVICE_ID',
-        'YOUR_CUSTOMER_TEMPLATE_ID',
-        {
-          ...emailData,
-          to_email: formData.email
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
         },
-        'YOUR_USER_ID'
-      );
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'Kunde inte skicka e-post');
+      }
 
       setIsSubmitted(true);
     } catch (error) {
