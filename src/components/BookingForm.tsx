@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, User, Home, Calendar, FileText, Mail } from 'lucide-react';
 // Using serverless function instead of EmailJS
 
@@ -46,6 +46,19 @@ const BookingForm: React.FC = () => {
   });
 
   const [errors, setErrors] = useState<FormErrors>({});
+
+  // Preselect service type from URL (?service=grundstadning|storstadning|fonsterputs)
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const svc = params.get('service');
+      if (svc === 'grundstadning' || svc === 'storstadning' || svc === 'fonsterputs') {
+        setFormData(prev => ({ ...prev, serviceType: svc as FormData['serviceType'] }));
+      }
+    } catch {}
+  }, []);
+
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined;
 
   const validateStep = (step: number): boolean => {
     const newErrors: FormErrors = {};
@@ -201,7 +214,8 @@ Totalt pris: ${calculatePrice()} kr
         `
       };
 
-      const response = await fetch('/api/send-email', {
+      const endpoint = (API_BASE_URL ? API_BASE_URL.replace(/\/$/, '') : '') + '/api/send-email';
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -211,13 +225,14 @@ Totalt pris: ${calculatePrice()} kr
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(data.error || 'Kunde inte skicka e-post');
+        throw new Error(data.error || `Kunde inte skicka e-post (HTTP ${response.status})`);
       }
 
       setIsSubmitted(true);
     } catch (error) {
       console.error('Error sending email:', error);
-      alert('Ett fel uppstod vid skickandet. Vänligen försök igen.');
+      const message = error instanceof Error ? error.message : 'Ett fel uppstod vid skickandet. Vänligen försök igen.';
+      alert(message);
     }
 
     setIsSubmitting(false);

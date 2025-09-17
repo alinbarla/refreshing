@@ -140,7 +140,14 @@ const Services: React.FC = () => {
                 {/* CTA Button */}
                 <div className="px-8 pb-8">
                   <button
-                    onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
+                    onClick={() => {
+                      try {
+                        const url = new URL(window.location.href);
+                        url.searchParams.set('service', service.title.toLowerCase().includes('grund') ? 'grundstadning' : service.title.toLowerCase().includes('storst') ? 'storstadning' : 'fonsterputs');
+                        window.history.replaceState(null, '', url.toString());
+                      } catch {}
+                      document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
                     className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                   >
                     Boka {service.title}

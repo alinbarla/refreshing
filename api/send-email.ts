@@ -11,6 +11,12 @@ const requiredEnv = [
 
 type RequiredEnv = typeof requiredEnv[number];
 
+function setCors(res: VercelResponse) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+}
+
 function getEnv(name: RequiredEnv): string {
   const value = process.env[name];
   if (!value) {
@@ -24,8 +30,14 @@ function isValidEmail(email: string): boolean {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  setCors(res);
+
+  if (req.method === 'OPTIONS') {
+    return res.status(204).end();
+  }
+
   if (req.method !== 'POST') {
-    res.setHeader('Allow', 'POST');
+    res.setHeader('Allow', 'POST, OPTIONS');
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
@@ -47,22 +59,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'Ogiltig e-postadress' });
     }
 
-    // Basic sanity validation
     if (!customer_name || !service_type || !frequency || (!windows && !square_meters)) {
       return res.status(400).json({ error: 'Vänligen fyll i alla obligatoriska fält' });
     }
 
-    // Load env
     const host = getEnv('SMTP_HOST');
     const port = parseInt(getEnv('SMTP_PORT'), 10);
     const user = getEnv('SMTP_USER');
     const pass = getEnv('SMTP_PASS');
-    const from = getEnv('SMTP_FROM'); // e.g., "Refreshing <info@refreshing.se>"
+    const from = getEnv('SMTP_FROM');
 
     const transporter = nodemailer.createTransport({
       host,
       port,
-      secure: port === 465, // true for 465, false for others
+      secure: port === 465,
       auth: { user, pass }
     });
 
@@ -82,7 +92,6 @@ ${windows ? `Antal fönster: ${windows}` : ''}
 Totalt pris: ${total_price}
 `;
 
-    // Send to business
     await transporter.sendMail({
       from,
       to: businessTo,
@@ -91,7 +100,6 @@ Totalt pris: ${total_price}
       text: booking_details ? `${textSummary}\n${booking_details}` : textSummary
     });
 
-    // Send confirmation to customer
     await transporter.sendMail({
       from,
       to: customer_email,
@@ -102,6 +110,7 @@ Totalt pris: ${total_price}
 
     return res.status(200).json({ ok: true });
   } catch (error: any) {
+    // eslint-disable-next-line no-console
     console.error('Email send error:', error);
     const message = error?.message || 'Serverfel';
     return res.status(500).json({ error: message });
