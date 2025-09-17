@@ -155,13 +155,13 @@ const Hero: React.FC = () => {
               />
             </div>
             {/* Floating Cards */}
-            <div className="absolute -top-4 -left-4 bg-white p-4 rounded-xl shadow-lg border border-gray-200">
+            <div className="hidden sm:block absolute -top-4 -left-4 bg-white p-4 rounded-xl shadow-lg border border-gray-200">
               <div className="flex items-center space-x-2">
                 <CheckCircle className="h-5 w-5 text-green-600" />
                 <span className="text-sm font-semibold text-gray-800">100% Garanterat</span>
               </div>
             </div>
-            <div className="absolute -bottom-4 -right-4 bg-white p-4 rounded-xl shadow-lg border border-gray-200">
+            <div className="hidden sm:block absolute -bottom-4 -right-4 bg-white p-4 rounded-xl shadow-lg border border-gray-200">
               <div className="flex items-center space-x-2">
                 <Clock className="h-5 w-5 text-cyan-600" />
                 <span className="text-sm font-semibold text-gray-800">Snabb bokning</span>
