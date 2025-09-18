@@ -333,7 +333,7 @@ Totalt pris: ${calculatePrice()} kr
         </div>
 
         {/* Form Content */}
-        <div className="bg-white rounded-2xl shadow-lg p-8">
+        <div key={currentStep} className="bg-white rounded-2xl shadow-lg p-8">
           
           {/* Step 1: Personal Information */}
           {currentStep === 1 && (
