@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight, User, Home, Calendar, FileText, Mail } from 'lucide-react';
 // Using serverless function instead of EmailJS
 
@@ -32,6 +32,9 @@ const BookingForm: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [addressSelected, setAddressSelected] = useState(false);
+  const [addressPlaceId, setAddressPlaceId] = useState<string | null>(null);
+  const addressInputRef = useRef<HTMLInputElement | null>(null);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     phone: '',
@@ -58,6 +61,33 @@ const BookingForm: React.FC = () => {
     } catch {}
   }, []);
 
+  // Initialize Google Places Autocomplete for address
+  useEffect(() => {
+    const initAutocomplete = () => {
+      const google = (window as unknown as { google?: any }).google;
+      if (!google?.maps?.places || !addressInputRef.current) return;
+      const autocomplete = new google.maps.places.Autocomplete(addressInputRef.current, {
+        types: ['geocode']
+      });
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        const formatted = place?.formatted_address || addressInputRef.current?.value || '';
+        const pid = place?.place_id || null;
+        setFormData(prev => ({ ...prev, address: formatted }));
+        setAddressPlaceId(pid);
+        setAddressSelected(Boolean(pid));
+        if (pid && errors.address) {
+          setErrors(prev => ({ ...prev, address: '' }));
+        }
+      });
+    };
+
+    // Try init immediately, else retry once after a tick
+    initAutocomplete();
+    const t = setTimeout(initAutocomplete, 500);
+    return () => clearTimeout(t);
+  }, [errors.address]);
+
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined;
 
   const validateStep = (step: number): boolean => {
@@ -66,14 +96,15 @@ const BookingForm: React.FC = () => {
     if (step === 1) {
       if (!formData.name.trim()) newErrors.name = 'Namn är obligatoriskt';
       if (!formData.phone.trim()) newErrors.phone = 'Telefon är obligatoriskt';
+      else if (!/^\d{1,10}$/.test(formData.phone)) newErrors.phone = 'Endast siffror, max 10 tecken';
       if (!formData.email.trim()) newErrors.email = 'E-post är obligatoriskt';
       else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Ogiltig e-postadress';
       if (!formData.address.trim()) newErrors.address = 'Adress är obligatorisk';
+      else if (!addressSelected || !addressPlaceId) newErrors.address = 'Välj en giltig adress från listan';
     }
 
     if (step === 2) {
-      // Allow proceeding to step 2 without selecting service type
-      // Service type will be required when going to step 3
+      if (!formData.serviceType) newErrors.serviceType = 'Välj en tjänst för att fortsätta';
     }
 
     if (step === 3) {
@@ -180,7 +211,16 @@ const BookingForm: React.FC = () => {
   };
 
   const handleInputChange = (field: keyof FormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    if (field === 'phone') {
+      const digitsOnly = value.replace(/\D/g, '').slice(0, 10);
+      setFormData(prev => ({ ...prev, phone: digitsOnly }));
+    } else if (field === 'address') {
+      setAddressSelected(false);
+      setAddressPlaceId(null);
+      setFormData(prev => ({ ...prev, address: value }));
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    }
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
@@ -368,6 +408,7 @@ Totalt pris: ${calculatePrice()} kr
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => handleInputChange('phone', e.target.value)}
+                    maxLength={10}
                     className={`w-full px-4 py-3 rounded-lg border ${
                       errors.phone ? 'border-red-500' : 'border-gray-300'
                     } focus:ring-2 focus:ring-cyan-500 focus:border-transparent`}
@@ -397,6 +438,7 @@ Totalt pris: ${calculatePrice()} kr
                     Adress *
                   </label>
                   <input
+                    ref={addressInputRef}
                     type="text"
                     value={formData.address}
                     onChange={(e) => handleInputChange('address', e.target.value)}
