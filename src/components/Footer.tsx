@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, Mail, MapPin, Clock, Facebook, Instagram, Sparkles } from 'lucide-react';
+import { Phone, Mail, MapPin, Clock, Facebook, Instagram } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
@@ -10,10 +10,8 @@ const Footer: React.FC = () => {
           <div className="grid md:grid-cols-4 gap-8">
             {/* Company Info */}
             <div className="space-y-4">
-              <div className="flex items-center space-x-2">
-                <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-lg">
-                  <Sparkles className="h-6 w-6 text-white" />
-                </div>
+              <div className="flex items-center space-x-3">
+                <img src="/stadning-stockholm.png" alt="Refreshing Stockholm städning" className="h-8 w-auto object-contain" />
                 <div>
                   <h3 className="text-xl font-bold">Refreshing</h3>
                   <p className="text-sm text-gray-400">Professionell hemstädning</p>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,17 +9,15 @@ const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-4">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-lg shadow-lg">
-              <Sparkles className="h-6 w-6 text-white" />
-            </div>
+          <a href="#hem" className="flex items-center space-x-3">
+            <img src="/stadning-stockholm.png" alt="Refreshing Stockholm städning" className="h-10 w-auto object-contain" />
             <div>
               <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
                 Refreshing
               </h1>
               <p className="text-xs text-gray-600">Professionell hemstädning</p>
             </div>
-          </div>
+          </a>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
@@ -37,7 +35,7 @@ const Header: React.FC = () => {
             </a>
             <button
               onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
-              className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+              className="bg-gradient-to-r from-[#fff720] to-[#3cd500] text-gray-900 px-6 py-2 rounded-full font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
             >
               Boka Nu
             </button>

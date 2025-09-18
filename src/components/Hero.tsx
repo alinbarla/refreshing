@@ -68,7 +68,7 @@ const Hero: React.FC = () => {
           <div className="space-y-8">
             <div>
               <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight">
-                <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-green-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent">
                   Refreshing städservice
                 </span>
                 <br />
@@ -82,9 +82,9 @@ const Hero: React.FC = () => {
             </div>
 
             {/* Zip Code Checker */}
-            <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-200">
+            <div className="bg-white rounded-xl shadow-lg p-6 border border-green-200">
               <div className="flex items-center space-x-2 mb-4">
-                <MapPin className="h-5 w-5 text-cyan-600" />
+                <MapPin className="h-5 w-5 text-green-600" />
                 <h3 className="text-lg font-semibold text-gray-800">
                   Kontrollera om vi städar i ditt område
                 </h3>
@@ -101,7 +101,7 @@ const Hero: React.FC = () => {
                     value={zipCode}
                     onChange={handleZipCodeChange}
                     placeholder="123 45"
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-cyan-500 focus:border-transparent text-lg"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-600 focus:border-transparent text-lg"
                     maxLength={6}
                   />
                 </div>
@@ -128,7 +128,7 @@ const Hero: React.FC = () => {
                 {isValidZip && (
                   <button
                     onClick={scrollToBookingForm}
-                    className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                    className="w-full bg-gradient-to-r from-[#fff720] to-[#3cd500] text-gray-900 px-8 py-4 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                   >
                     Boka Nu - Få Offert
                   </button>

@@ -64,7 +64,7 @@ const Services: React.FC = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-            Våra <span className="bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
+            Våra <span className="bg-gradient-to-r from-green-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent">
               städtjänster
             </span>
           </h2>
@@ -149,7 +149,7 @@ const Services: React.FC = () => {
                       } catch {}
                       document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' });
                     }}
-                    className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                    className="w-full bg-gradient-to-r from-[#fff720] to-[#3cd500] text-gray-900 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                   >
                     Boka {service.title}
                   </button>

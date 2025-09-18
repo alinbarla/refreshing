@@ -721,7 +721,7 @@ Totalt pris: ${calculatePrice()} kr
                 <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className={`flex-1 bg-gradient-to-r from-blue-500 to-cyan-600 text-white py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 ${
+                  className={`flex-1 bg-gradient-to-r from-[#fff720] to-[#3cd500] text-gray-900 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 ${
                     isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
                   }`}
                 >
@@ -766,7 +766,7 @@ Totalt pris: ${calculatePrice()} kr
 
                 <button
                   onClick={nextStep}
-                  className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-600 text-white rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                  className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-[#fff720] to-[#3cd500] text-gray-900 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                 >
                   <span>Nästa</span>
                   <ChevronRight className="h-4 w-4" />

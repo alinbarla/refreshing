@@ -143,7 +143,7 @@ const Testimonials: React.FC = () => {
           </p>
           <button
             onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
-            className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+            className="bg-gradient-to-r from-[#fff720] to-[#3cd500] text-gray-900 px-8 py-4 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
           >
             Boka Din Städning Nu
           </button>
