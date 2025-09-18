@@ -1,5 +1,3 @@
-/// <reference types="vite/client" />
-
 export {};
 
 declare global {
@@ -9,3 +7,5 @@ declare global {
     }
   }
 }
+
+

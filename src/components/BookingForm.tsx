@@ -35,6 +35,7 @@ const BookingForm: React.FC = () => {
   const [addressSelected, setAddressSelected] = useState(false);
   const [addressPlaceId, setAddressPlaceId] = useState<string | null>(null);
   const addressInputRef = useRef<HTMLInputElement | null>(null);
+  const placeAutocompleteRef = useRef<any>(null);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     phone: '',
@@ -61,18 +62,18 @@ const BookingForm: React.FC = () => {
     } catch {}
   }, []);
 
-  // Initialize Google Places Autocomplete for address
+  // Initialize Google Places PlaceAutocompleteElement (recommended API)
   useEffect(() => {
     const initAutocomplete = () => {
       const google = (window as unknown as { google?: any }).google;
-      if (!google?.maps?.places || !addressInputRef.current) return;
-      const autocomplete = new google.maps.places.Autocomplete(addressInputRef.current, {
-        types: ['geocode']
-      });
-      autocomplete.addListener('place_changed', () => {
-        const place = autocomplete.getPlace();
-        const formatted = place?.formatted_address || addressInputRef.current?.value || '';
-        const pid = place?.place_id || null;
+      if (!google?.maps?.places) return;
+      if (!placeAutocompleteRef.current) return;
+      const el = placeAutocompleteRef.current as HTMLElement & { value?: string };
+      // Listen for place selection
+      el.addEventListener('gmp-placeselect', (e: any) => {
+        const place = e?.detail?.place;
+        const formatted = place?.formattedAddress || el.value || '';
+        const pid = place?.id || null;
         setFormData(prev => ({ ...prev, address: formatted }));
         setAddressPlaceId(pid);
         setAddressSelected(Boolean(pid));
@@ -437,16 +438,23 @@ Totalt pris: ${calculatePrice()} kr
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Adress *
                   </label>
-                  <input
-                    ref={addressInputRef}
-                    type="text"
-                    value={formData.address}
-                    onChange={(e) => handleInputChange('address', e.target.value)}
-                    className={`w-full px-4 py-3 rounded-lg border ${
-                      errors.address ? 'border-red-500' : 'border-gray-300'
-                    } focus:ring-2 focus:ring-cyan-500 focus:border-transparent`}
-                    placeholder="Gatuadress, Stockholm"
-                  />
+                  <div className={`w-full rounded-lg ${errors.address ? 'border border-red-500' : ''}`}>
+                    <gmpx-place-autocomplete
+                      jscontroller
+                      jsaction
+                      ref={placeAutocompleteRef}
+                      inputmode="text"
+                      placeholder="Gatuadress, Stockholm"
+                      style={{ display: 'block' }}
+                    ></gmpx-place-autocomplete>
+                    {/* Hidden mirror input to keep controlled value for summary and submission */}
+                    <input
+                      ref={addressInputRef}
+                      type="hidden"
+                      value={formData.address}
+                      onChange={() => {}}
+                    />
+                  </div>
                   {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
                 </div>
               </div>
