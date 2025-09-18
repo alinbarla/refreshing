@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MapPin, Clock, CheckCircle } from 'lucide-react';
 
 const Hero: React.FC = () => {
@@ -43,6 +43,20 @@ const Hero: React.FC = () => {
         setIsValidZip(null);
         setAvailability('');
       }
+    }
+  };
+
+  const scrollToBookingForm = () => {
+    try {
+      // Use a timeout to ensure the DOM is ready
+      setTimeout(() => {
+        const bookingForm = document.getElementById('booking-form');
+        if (bookingForm && bookingForm.parentNode) {
+          bookingForm.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } catch (error) {
+      console.error('Error scrolling to booking form:', error);
     }
   };
 
@@ -113,7 +127,7 @@ const Hero: React.FC = () => {
 
                 {isValidZip && (
                   <button
-                    onClick={() => document.getElementById('booking-form')?.scrollIntoView({ behavior: 'smooth' })}
+                    onClick={scrollToBookingForm}
                     className="w-full bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-8 py-4 rounded-lg font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                   >
                     Boka Nu - Få Offert

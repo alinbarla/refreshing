@@ -17,9 +17,7 @@ if (typeof window !== 'undefined') {
 }
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
-  </StrictMode>
+  <ErrorBoundary>
+    <App />
+  </ErrorBoundary>
 );
