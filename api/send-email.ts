@@ -76,6 +76,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       auth: { user, pass }
     });
 
+    // Validate SMTP credentials early for clearer errors
+    try {
+      await transporter.verify();
+    } catch (verifyError: any) {
+      // eslint-disable-next-line no-console
+      console.error('SMTP verify failed:', verifyError);
+      const msg = typeof verifyError?.message === 'string' ? verifyError.message : 'SMTP autentisering misslyckades';
+      // Common provider wording normalization (e.g., 535 5.7.8 invalid credentials)
+      if (/535\b/.test(msg) || /5\.7\.8/.test(msg) || /authentication failed/i.test(msg)) {
+        return res.status(500).json({
+          error: 'Ogiltiga SMTP-uppgifter. Kontrollera SMTP_USER/SMTP_PASS, host och port.'
+        });
+      }
+      return res.status(500).json({ error: `SMTP-fel: ${msg}` });
+    }
+
     const businessTo = 'info@refreshing.se';
 
     const subjectBusiness = `Ny bokning: ${service_type} – ${customer_name}`;
@@ -113,6 +129,11 @@ Totalt pris: ${total_price}
     // eslint-disable-next-line no-console
     console.error('Email send error:', error);
     const message = error?.message || 'Serverfel';
+    if (/535\b/.test(message) || /5\.7\.8/.test(message) || /authentication failed/i.test(message)) {
+      return res.status(500).json({
+        error: 'Ogiltiga SMTP-uppgifter. Kontrollera SMTP_USER/SMTP_PASS, host och port.'
+      });
+    }
     return res.status(500).json({ error: message });
   }
 }
