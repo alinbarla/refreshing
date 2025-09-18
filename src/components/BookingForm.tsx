@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, User, Home, Calendar, FileText, Mail } from 'lucide-react';
 // Using serverless function instead of EmailJS
 
@@ -32,10 +32,6 @@ const BookingForm: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [addressSelected, setAddressSelected] = useState(false);
-  const [addressPlaceId, setAddressPlaceId] = useState<string | null>(null);
-  const addressInputRef = useRef<HTMLInputElement | null>(null);
-  const placeAutocompleteRef = useRef<any>(null);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     phone: '',
@@ -62,31 +58,7 @@ const BookingForm: React.FC = () => {
     } catch {}
   }, []);
 
-  // Initialize Google Places PlaceAutocompleteElement (recommended API)
-  useEffect(() => {
-    const initAutocomplete = () => {
-      const google = (window as unknown as { google?: any }).google;
-      const el = placeAutocompleteRef.current as (HTMLElement & { value?: string }) | null;
-      if (!google?.maps?.places || !el) return;
-      // Listen for place selection (event name per extended component library)
-      el.addEventListener('gmpx-placechange', (e: any) => {
-        const place = e?.detail?.place;
-        const formatted = place?.formattedAddress || el.value || '';
-        const pid = place?.id || null;
-        setFormData(prev => ({ ...prev, address: formatted }));
-        setAddressPlaceId(pid);
-        setAddressSelected(Boolean(pid));
-        if (pid && errors.address) {
-          setErrors(prev => ({ ...prev, address: '' }));
-        }
-      });
-    };
-
-    // Try init immediately, else retry once after a tick
-    initAutocomplete();
-    const t = setTimeout(initAutocomplete, 500);
-    return () => clearTimeout(t);
-  }, [errors.address]);
+  // No external address autocomplete; keep minimal effects only
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined;
 
@@ -99,8 +71,13 @@ const BookingForm: React.FC = () => {
       else if (!/^\d{1,10}$/.test(formData.phone)) newErrors.phone = 'Endast siffror, max 10 tecken';
       if (!formData.email.trim()) newErrors.email = 'E-post är obligatoriskt';
       else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Ogiltig e-postadress';
-      if (!formData.address.trim()) newErrors.address = 'Adress är obligatorisk';
-      else if (!addressSelected || !addressPlaceId) newErrors.address = 'Välj en giltig adress från listan';
+      // Advanced hardcoded address validation: require letters and at least one number
+      const address = formData.address.trim();
+      const hasLetters = /[A-Za-zÅÄÖåäö]/.test(address);
+      const hasNumber = /\d+/.test(address);
+      const minLen = address.length >= 5;
+      if (!address) newErrors.address = 'Adress är obligatorisk';
+      else if (!(hasLetters && hasNumber && minLen)) newErrors.address = 'Ange en giltig adress (t.ex. "Gatan 12")';
     }
 
     if (step === 2) {
@@ -215,8 +192,6 @@ const BookingForm: React.FC = () => {
       const digitsOnly = value.replace(/\D/g, '').slice(0, 10);
       setFormData(prev => ({ ...prev, phone: digitsOnly }));
     } else if (field === 'address') {
-      setAddressSelected(false);
-      setAddressPlaceId(null);
       setFormData(prev => ({ ...prev, address: value }));
     } else {
       setFormData(prev => ({ ...prev, [field]: value }));
@@ -437,27 +412,16 @@ Totalt pris: ${calculatePrice()} kr
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Adress *
                   </label>
-                  <div className={`w-full rounded-lg ${errors.address ? 'border border-red-500' : ''}`}>
-                    {/* Fallback input if web component isn't available */}
-                    <div style={{ display: (window as any)?.customElements?.get('gmpx-place-autocomplete') ? 'none' : 'block' }}>
-                      <input
-                        ref={addressInputRef}
-                        type="text"
-                        value={formData.address}
-                        onChange={(e) => handleInputChange('address', e.target.value)}
-                        className={`w-full px-4 py-3 rounded-lg border ${
-                          errors.address ? 'border-red-500' : 'border-gray-300'
-                        } focus:ring-2 focus:ring-cyan-500 focus:border-transparent`}
-                        placeholder="Gatuadress, Stockholm"
-                      />
-                    </div>
-                    <gmpx-place-autocomplete
-                      ref={placeAutocompleteRef}
-                      inputmode="text"
-                      placeholder="Gatuadress, Stockholm"
-                      style={{ display: (window as any)?.customElements?.get('gmpx-place-autocomplete') ? 'block' : 'none' }}
-                    ></gmpx-place-autocomplete>
-                  </div>
+                  <input
+                    type="text"
+                    value={formData.address}
+                    onChange={(e) => handleInputChange('address', e.target.value)}
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.address ? 'border-red-500' : 'border-gray-300'
+                    } focus:ring-2 focus:ring-cyan-500 focus:border-transparent`}
+                    placeholder="Gatuadress, Stockholm (t.ex. Storgatan 12)"
+                  />
+                  {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
                   {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
                 </div>
               </div>
