@@ -69,8 +69,9 @@ const Services: React.FC = () => {
             </span>
           </h2>
           <p className="text-xl text-gray-700 max-w-3xl mx-auto leading-relaxed">
-            Refreshing erbjuder professionell städservice Stockholm med fokus på kvalitet och kundnöjdhet. 
-            Vi utför hemstädning, lägenhetsstädning och fönsterputs med alla material inkluderade.
+            Refreshing är en städfirma i Stockholm som erbjuder professionell <strong>hemstädning</strong>, 
+            <strong> lägenhetsstädning</strong>, <strong>storstädning</strong> och <strong>fönsterputs</strong>. Vi levererar 
+            trygg <strong>städservice i Stockholm</strong> med hög kvalitet och kundnöjdhet – alla städmaterial ingår.
           </p>
         </div>
 

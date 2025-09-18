@@ -80,6 +80,9 @@ const Gallery: React.FC = () => {
                   src={item.image}
                   alt={`${item.title} - Stockholm städservice`}
                   className="w-full h-64 object-cover"
+                  width="800"
+                  height="400"
+                  loading="lazy"
                 />
                 
                 {/* Hover Overlay */}
@@ -157,6 +160,9 @@ const Gallery: React.FC = () => {
                   src={galleryImages[selectedImage].image}
                   alt={`${galleryImages[selectedImage].title} - professionell städning Stockholm`}
                   className="w-full h-96 object-cover"
+                  width="1200"
+                  height="600"
+                  loading="lazy"
                 />
               </div>
               

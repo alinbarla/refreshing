@@ -5,6 +5,7 @@ import Services from './components/Services';
 import BookingForm from './components/BookingForm';
 import Testimonials from './components/Testimonials';
 import Gallery from './components/Gallery';
+import About from './components/About';
 import Footer from './components/Footer';
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
       <Hero />
       <Services />
       <BookingForm />
+      <About />
       <Testimonials />
       <Gallery />
       <Footer />

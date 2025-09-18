@@ -166,6 +166,10 @@ const Hero: React.FC = () => {
                 src="https://images.pexels.com/photos/4239037/pexels-photo-4239037.jpeg?auto=compress&cs=tinysrgb&w=800"
                 alt="Professionell städning Stockholm - hemstädning och lägenhetsstädning"
                 className="w-full h-full object-cover"
+                width="800"
+                height="800"
+                loading="eager"
+                fetchPriority="high"
               />
             </div>
             {/* Floating Cards */}
