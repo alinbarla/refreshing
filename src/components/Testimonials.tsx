@@ -8,42 +8,42 @@ const Testimonials: React.FC = () => {
       location: 'Södermalm, Stockholm',
       rating: 5,
       text: 'Fantastisk städservice! De kom i tid och gjorde ett perfekt jobb med vår lägenhetsstädning. Alla städmaterial var inkluderade och resultatet överträffade våra förväntningar. Rekommenderar verkligen denna professionella städning Stockholm!',
-      image: 'https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
+      image: 'https://images.pexels.com/photos/4239145/pexels-photo-4239145.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
     },
     {
       name: 'Erik Johansson',
       location: 'Östermalm, Stockholm',
       rating: 5,
       text: 'Vi bokade storstädning inför flytt och blev så nöjda! Grundlig städning av alla rum och badrummet blev skinande rent. Priserna var rimliga och servicen var professionell från start till slut.',
-      image: 'https://images.pexels.com/photos/2379005/pexels-photo-2379005.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
+      image: 'https://images.pexels.com/photos/4239094/pexels-photo-4239094.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
     },
     {
       name: 'Maria Andersson',
       location: 'Vasastan, Stockholm',
       rating: 5,
       text: 'Regelbunden hemstädning varje vecka - så skönt att komma hem till en ren lägenhet! Refreshing är pålitlig och noggrann. Fönsterputsen var också utmärkt. Bästa städservice i Stockholm enligt mig!',
-      image: 'https://images.pexels.com/photos/3992656/pexels-photo-3992656.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
+      image: 'https://images.pexels.com/photos/4239091/pexels-photo-4239091.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
     },
     {
       name: 'David Chen',
       location: 'Norrmalm, Stockholm',
       rating: 5,
       text: 'Snabb och effektiv bokning online. De kom samma dag och gjorde en grundlig grundstädning. Alla rengöringsmedel medtagna och inget extra att betala. Kommer definitivt att boka igen!',
-      image: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
+      image: 'https://images.pexels.com/photos/4108715/pexels-photo-4108715.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
     },
     {
       name: 'Lisa Persson',
       location: 'Kungsholmen, Stockholm',
       rating: 5,
       text: 'Professionell fönsterputs både in- och utanför. Resultatet blev kristallklart utan ränder. Använder bara professionella verktyg och tekniker. Mycket nöjd med kvaliteten!',
-      image: 'https://images.pexels.com/photos/3211476/pexels-photo-3211476.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
+      image: 'https://images.pexels.com/photos/3616761/pexels-photo-3616761.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
     },
     {
       name: 'Johan Nilsson',
       location: 'Gamla Stan, Stockholm',
       rating: 5,
       text: 'Exceptionell service och kundvård. De lyssnade på våra specifika behov och anpassade städningen därefter. Vår gamla lägenhet har aldrig sett bättre ut. Rekommenderar starkt!',
-      image: 'https://images.pexels.com/photos/2613260/pexels-photo-2613260.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
+      image: 'https://images.pexels.com/photos/4239090/pexels-photo-4239090.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&fit=crop'
     }
   ];
 

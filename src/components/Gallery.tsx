@@ -6,34 +6,34 @@ const Gallery: React.FC = () => {
 
   const galleryImages = [
     {
-      image: 'https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=800',
+      image: 'https://images.pexels.com/photos/4239037/pexels-photo-4239037.jpeg?auto=compress&cs=tinysrgb&w=800',
       title: 'Köksstädning',
-      description: 'Professionell köksstädning med djuprengöring av alla ytor och apparater'
+      description: 'Djuprengöring av kök: bänkar, spis, ho och vitvaror'
     },
     {
-      image: 'https://images.pexels.com/photos/271743/pexels-photo-271743.jpeg?auto=compress&cs=tinysrgb&w=800',
+      image: 'https://images.pexels.com/photos/4239145/pexels-photo-4239145.jpeg?auto=compress&cs=tinysrgb&w=800',
       title: 'Badrumsstädning',
-      description: 'Grundlig badrumsstädning med alla ytor, armaturer och glaspartier'
+      description: 'Avkalkning och rengöring av dusch, toalett, handfat och kakel'
     },
     {
-      image: 'https://images.pexels.com/photos/271897/pexels-photo-271897.jpeg?auto=compress&cs=tinysrgb&w=800',
-      title: 'Vardagsrum',
-      description: 'Komplett städning av vardagsrum med dammsugning och dammning'
+      image: 'https://images.pexels.com/photos/4108715/pexels-photo-4108715.jpeg?auto=compress&cs=tinysrgb&w=800',
+      title: 'Vardagsrum städning',
+      description: 'Dammsugning, dammtorkning och våttorkning av alla ytor'
     },
     {
-      image: 'https://images.pexels.com/photos/271897/pexels-photo-271897.jpeg?auto=compress&cs=tinysrgb&w=800',
-      title: 'Sovrum',
-      description: 'Noggrann sovrumsstädning med bäddning och organisering'
+      image: 'https://images.pexels.com/photos/4239091/pexels-photo-4239091.jpeg?auto=compress&cs=tinysrgb&w=800',
+      title: 'Sovrumsstädning',
+      description: 'Bäddning, dammtorkning och noggrann golvrengöring'
     },
     {
-      image: 'https://images.pexels.com/photos/271743/pexels-photo-271743.jpeg?auto=compress&cs=tinysrgb&w=800',
+      image: 'https://images.pexels.com/photos/3616761/pexels-photo-3616761.jpeg?auto=compress&cs=tinysrgb&w=800',
       title: 'Fönsterputs',
-      description: 'Professionell fönsterputs med kristallklart resultat in- och utanför'
+      description: 'Kristallklar fönsterputs med professionella verktyg'
     },
     {
-      image: 'https://images.pexels.com/photos/271816/pexels-photo-271816.jpeg?auto=compress&cs=tinysrgb&w=800',
-      title: 'Komplett lägenhet',
-      description: 'Totalstädning av hela lägenheten från golv till tak'
+      image: 'https://images.pexels.com/photos/4107283/pexels-photo-4107283.jpeg?auto=compress&cs=tinysrgb&w=800',
+      title: 'Komplett lägenhetsstädning',
+      description: 'Helhetsstädning av hela hemmet – från golv till tak'
     }
   ];
 
