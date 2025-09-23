@@ -48,13 +48,10 @@ const Hero: React.FC = () => {
 
   const scrollToBookingForm = () => {
     try {
-      // Use a timeout to ensure the DOM is ready
-      setTimeout(() => {
-        const bookingForm = document.getElementById('booking-form');
-        if (bookingForm && bookingForm.parentNode) {
-          bookingForm.scrollIntoView({ behavior: 'smooth' });
-        }
-      }, 100);
+      const bookingForm = document.getElementById('booking-form');
+      if (bookingForm) {
+        bookingForm.scrollIntoView({ behavior: 'smooth' });
+      }
     } catch (error) {
       console.error('Error scrolling to booking form:', error);
     }
@@ -169,7 +166,7 @@ const Hero: React.FC = () => {
                 width="800"
                 height="800"
                 loading="eager"
-                fetchPriority="high"
+                fetchpriority="high"
               />
             </div>
             {/* Floating Cards */}

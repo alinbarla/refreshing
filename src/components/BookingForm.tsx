@@ -316,7 +316,7 @@ Totalt pris: ${calculatePrice()} kr
         <div className="mb-12">
           <div className="flex items-center justify-between max-w-md mx-auto">
             {[1, 2, 3, 4].map((step) => (
-              <React.Fragment key={step}>
+              <React.Fragment key={`progress-${step}`}>
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg transition-all duration-300 ${
                   step === currentStep
                     ? 'bg-gradient-to-r from-blue-500 to-cyan-600 text-white shadow-xl scale-110' 
@@ -348,11 +348,10 @@ Totalt pris: ${calculatePrice()} kr
         </div>
 
         {/* Form Content */}
-        <div key={currentStep} className="bg-white rounded-2xl shadow-lg p-8">
+        <div className="bg-white rounded-2xl shadow-lg p-8">
           
           {/* Step 1: Personal Information */}
-          {currentStep === 1 && (
-            <div className="space-y-6">
+          <div className={`space-y-6 ${currentStep === 1 ? '' : 'hidden'}`}>
               <div className="flex items-center space-x-3 mb-6">
                 <User className="h-6 w-6 text-cyan-600" />
                 <h3 className="text-2xl font-bold text-gray-900">Personlig Information</h3>
@@ -422,15 +421,12 @@ Totalt pris: ${calculatePrice()} kr
                     placeholder="Gatuadress, Stockholm (t.ex. Storgatan 12)"
                   />
                   {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
-                  {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
                 </div>
               </div>
             </div>
-          )}
 
           {/* Step 2: Service Type */}
-          {currentStep === 2 && (
-            <div className="space-y-6">
+          <div className={`space-y-6 ${currentStep === 2 ? '' : 'hidden'}`}>
               <div className="flex items-center space-x-3 mb-6">
                 <Home className="h-6 w-6 text-cyan-600" />
                 <h3 className="text-2xl font-bold text-gray-900">Typ av Service</h3>
@@ -467,11 +463,9 @@ Totalt pris: ${calculatePrice()} kr
               </div>
               {errors.serviceType && <p className="text-red-500 text-sm">{errors.serviceType}</p>}
             </div>
-          )}
 
           {/* Step 3: Frequency & Size */}
-          {currentStep === 3 && (
-            <div className="space-y-6">
+          <div className={`space-y-6 ${currentStep === 3 ? '' : 'hidden'}`}>
               <div className="flex items-center space-x-3 mb-6">
                 <Calendar className="h-6 w-6 text-cyan-600" />
                 <h3 className="text-2xl font-bold text-gray-900">Frekvens & Storlek</h3>
@@ -659,11 +653,9 @@ Totalt pris: ${calculatePrice()} kr
                 </div>
               )}
             </div>
-          )}
-
+          
           {/* Step 4: Summary & Confirmation */}
-          {currentStep === 4 && (
-            <div className="space-y-6">
+          <div className={`space-y-6 ${currentStep === 4 ? '' : 'hidden'}`}>
               <div className="flex items-center space-x-3 mb-6">
                 <FileText className="h-6 w-6 text-cyan-600" />
                 <h3 className="text-2xl font-bold text-gray-900">Sammanfattning & Bekräftelse</h3>
@@ -729,48 +721,47 @@ Totalt pris: ${calculatePrice()} kr
                 </button>
               </div>
             </div>
-          )}
-
+          
           {/* Navigation Buttons */}
           {currentStep < 4 && (
-            <div className="flex justify-between items-center mt-8">
+            <div className="mt-8 flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
               {currentStep > 1 ? (
                 <button
                   onClick={prevStep}
-                  className="flex items-center space-x-2 px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                  className="flex items-center justify-center space-x-2 px-6 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors w-full md:w-auto"
                 >
                   <ChevronLeft className="h-4 w-4" />
                   <span>Tillbaka</span>
                 </button>
               ) : (
-                <div />
+                <div className="hidden md:block" />
               )}
 
-              <div className="flex items-center space-x-4">
+              <div className="flex flex-col-reverse gap-4 md:flex-row md:items-center md:gap-4 md:ml-auto w-full md:w-auto">
+                <button
+                  onClick={nextStep}
+                  className="w-full md:w-auto flex items-center justify-center space-x-2 px-6 py-3 bg-gradient-to-r from-[#fff720] to-[#3cd500] text-gray-900 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                >
+                  <span>Nästa</span>
+                  <ChevronRight className="h-4 w-4" />
+                </button>
+
                 {/* Price Display - Only show when all required info is available */}
                 {formData.serviceType && formData.squareMeters && formData.frequency && (
-                  <div className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-6 py-3 rounded-lg font-bold text-lg shadow-lg">
+                  <div className="w-full md:w-auto text-center bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-4 md:px-6 py-3 rounded-lg font-bold text-base md:text-lg shadow-lg">
                     {formData.frequency === 'regular' ? (
                       <>
-                        Månadspris: {calculatePrice()}kr ({formData.cleaningFrequency === 'weekly' ? 'Veckovis' : 
+                        Månadspris: {calculatePrice()}kr ({formData.cleaningFrequency === 'weekly' ? 'Veckovis' :
                          formData.cleaningFrequency === 'biweekly' ? 'Varannan vecka' : 'Månadsvis'})
                       </>
                     ) : (
                       <>
-                        Totalt pris: {calculatePrice()}kr ({formData.serviceType === 'grundstadning' ? 'Grundstädning' : 
+                        Totalt pris: {calculatePrice()}kr ({formData.serviceType === 'grundstadning' ? 'Grundstädning' :
                          formData.serviceType === 'storstadning' ? 'Storstädning' : 'Fönsterputs'})
                       </>
                     )}
                   </div>
                 )}
-
-                <button
-                  onClick={nextStep}
-                  className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-[#fff720] to-[#3cd500] text-gray-900 rounded-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-                >
-                  <span>Nästa</span>
-                  <ChevronRight className="h-4 w-4" />
-                </button>
               </div>
             </div>
           )}
