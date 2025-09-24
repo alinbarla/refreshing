@@ -62,6 +62,18 @@ const BookingForm: React.FC = () => {
 
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL as string | undefined;
 
+  // Fire Google Analytics/Ads conversion event safely (no-op if gtag is unavailable)
+  const sendGtagConversion = () => {
+    try {
+      if (typeof window !== 'undefined' && typeof (window as any).gtag === 'function') {
+        (window as any).gtag('event', 'conversion_event_contact', {
+          event_callback: () => {},
+          event_timeout: 2000
+        });
+      }
+    } catch {}
+  };
+
   const validateStep = (step: number): boolean => {
     const newErrors: FormErrors = {};
 
@@ -207,6 +219,9 @@ const BookingForm: React.FC = () => {
     setIsSubmitting(true);
 
     try {
+      // Fire conversion on send click at final step
+      sendGtagConversion();
+
       const payload = {
         customer_email: formData.email,
         customer_name: formData.name,
