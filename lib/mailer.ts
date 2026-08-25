@@ -1,16 +1,5 @@
 import nodemailer from 'nodemailer';
 
-const requiredEnv = [
-  'SMTP_HOST',
-  'SMTP_PORT',
-  'SMTP_USER',
-  'SMTP_PASS',
-  'SMTP_FROM',
-  'SMTP_TO'
-] as const;
-
-type RequiredEnv = (typeof requiredEnv)[number];
-
 export type BookingPayload = {
   customer_email?: string;
   customer_name?: string;
@@ -23,14 +12,6 @@ export type BookingPayload = {
   total_price?: string;
   booking_details?: string;
 };
-
-function getEnv(name: RequiredEnv): string {
-  const value = process.env[name];
-  if (!value) {
-    throw new Error(`Missing env: ${name}`);
-  }
-  return value;
-}
 
 function isValidEmail(email: string): boolean {
   return /.+@.+\..+/.test(email);
@@ -60,36 +41,29 @@ export async function sendBookingEmails(
     return { status: 400, body: { error: 'Vänligen fyll i alla obligatoriska fält' } };
   }
 
-  const host = getEnv('SMTP_HOST');
-  const port = parseInt(getEnv('SMTP_PORT'), 10);
-  const user = getEnv('SMTP_USER');
-  const pass = getEnv('SMTP_PASS').replace(/\s+/g, '');
-  const from = getEnv('SMTP_FROM');
-  const businessTo = getEnv('SMTP_TO');
+  const host = process.env.SMTP_HOST;
+  const port = parseInt(process.env.SMTP_PORT || '465', 10);
+  const user = process.env.SMTP_USER;
+  const pass = (process.env.SMTP_PASS || '').replace(/\s+/g, '');
+  const from = process.env.SMTP_FROM || (user ? `Refreshing <${user}>` : '');
+  const businessTo = process.env.SMTP_TO || 'alinbarla@hotmail.com';
+
+  if (!host || !user || !pass || !from) {
+    return {
+      status: 500,
+      body: { error: 'E-postservern saknar SMTP-uppgifter. Lägg till SMTP_HOST, SMTP_USER, SMTP_PASS och SMTP_FROM i Vercel.' }
+    };
+  }
 
   const transporter = nodemailer.createTransport({
     host,
     port,
     secure: port === 465,
-    auth: { user, pass }
+    auth: { user, pass },
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 20000
   });
-
-  try {
-    await transporter.verify();
-  } catch (verifyError: unknown) {
-    const msg =
-      verifyError instanceof Error ? verifyError.message : 'SMTP autentisering misslyckades';
-    console.error('SMTP verify failed:', verifyError);
-    if (/535\b/.test(msg) || /5\.7\.8/.test(msg) || /authentication failed/i.test(msg)) {
-      return {
-        status: 500,
-        body: {
-          error: 'Ogiltiga SMTP-uppgifter. Kontrollera SMTP_USER/SMTP_PASS, host och port.'
-        }
-      };
-    }
-    return { status: 500, body: { error: `SMTP-fel: ${msg}` } };
-  }
 
   const subjectBusiness = `Ny bokning: ${service_type} – ${customer_name}`;
   const subjectCustomer = `Bekräftelse: ${service_type} – Refreshing`;

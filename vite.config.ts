@@ -55,7 +55,7 @@ function localSendEmailPlugin(): Plugin {
 
         try {
           const payload = await readJsonBody(req);
-          const { sendBookingEmails } = await import('./api/mailer');
+          const { sendBookingEmails } = await import('./lib/mailer');
           const result = await sendBookingEmails((payload || {}) as Parameters<typeof sendBookingEmails>[0]);
           json(res, result.status, result.body);
         } catch (error) {
