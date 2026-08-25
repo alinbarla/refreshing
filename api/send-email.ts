@@ -1,16 +1,20 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { createRequire } from 'node:module';
+
+const require = createRequire(import.meta.url);
 const nodemailer = require('nodemailer');
 
-function setCors(res) {
+function setCors(res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
-function isValidEmail(email) {
-  return typeof email === 'string' && /.+@.+\..+/.test(email);
+function isValidEmail(email: string): boolean {
+  return /.+@.+\..+/.test(email);
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   setCors(res);
 
   if (req.method === 'OPTIONS') {
@@ -98,9 +102,9 @@ Totalt pris: ${total_price}
     });
 
     return res.status(200).json({ ok: true });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Email send error:', error);
-    const message = error && error.message ? error.message : 'Serverfel';
+    const message = error instanceof Error ? error.message : 'Serverfel';
     if (/535\b/.test(message) || /5\.7\.8/.test(message) || /authentication failed/i.test(message)) {
       return res.status(500).json({
         error: 'Ogiltiga SMTP-uppgifter. Kontrollera SMTP_USER/SMTP_PASS, host och port.'
@@ -108,4 +112,4 @@ Totalt pris: ${total_price}
     }
     return res.status(500).json({ error: message });
   }
-};
+}
